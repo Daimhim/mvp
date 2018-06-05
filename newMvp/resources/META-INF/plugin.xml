@@ -1,0 +1,51 @@
+<idea-plugin>
+    <id>com.Daimhim.company.unique.plugin.id</id>
+    <name>Android Studio NewMVP</name>
+    <version>1.0</version>
+    <vendor email="daimhim@163.com" url="https://github.com/Daimhim">Daimhim</vendor>
+
+    <description><![CDATA[
+      Enter short description for your plugin here.<br>
+      <em>most HTML tags may be used</em>
+    ]]></description>
+
+    <change-notes><![CDATA[
+      Add change notes here.<br>
+      <em>most HTML tags may be used</em>
+    ]]>
+    </change-notes>
+
+    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
+    <idea-version since-build="145.0"/>
+
+    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+         on how to target different products -->
+    <!-- uncomment to enable plugin in all products
+    <depends>com.intellij.modules.lang</depends>
+    -->
+    <!--<depends>intellij.modules.androidstudio</depends>-->
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Add your extensions here -->
+    </extensions>
+
+    <actions>
+        <group id="Group_NewMVP" popup="true" text="NewMVP">
+            <add-to-group group-id="NewGroup" anchor="last"/>
+            <group id="Group_NewAP" popup="true" text="NewAP">
+                <action class="newvp.ap.NewAPAction" id="Action_New_AP" text="NewAP"/>
+                <action class="newvp.fp.NewFPAction" id="Action_New_FP" text="NewFP"/>
+            </group>
+            <action id="Action_New_AFPMA" text="NewAFPMA" class="newafpm.NewAFPMAction"/>
+            <action id="Action_NewMVP_Simple" text="NewMVPSimple" class="newmvpsimple.NewMVPSimpleAction"/>
+            <action id="Action_ClassHelp" text="ClassHelp" class="test.TestAction"/>
+            <action id="Action_HelpDoc" text="HelpDoc" class="helpdoc.HelpDocAction"/>
+        </group>
+
+    </actions>
+    <module-components>
+        <component>
+            <implementation-class>NewMVPImp</implementation-class>
+        </component>
+    </module-components>
+</idea-plugin>
