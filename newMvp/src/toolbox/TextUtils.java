@@ -1,6 +1,5 @@
 package toolbox;
 
-import io.reactivex.annotations.Nullable;
 import resources.string;
 
 
@@ -9,7 +8,7 @@ import resources.string;
  */
 public class TextUtils {
 
-    public static boolean isEmpty(@Nullable CharSequence str) {
+    public static boolean isEmpty(CharSequence str) {
         if (str == null || str.length() == 0)
             return true;
         else

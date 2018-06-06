@@ -6,8 +6,10 @@ public class GlobalVariables {
     public static String IPRESENTER_PATH = "";
     public static String BASE_PRESENTER_PATH = "";
 
-    public static final String IVIEW = "IView";
-    public static final String IPRESENTER = "IPresenter";
-    public static final String BASE_PRESENTER = "BasePresenterImpl";
+    public static final String IVIEW = "IView.java";
+    public static final String IPRESENTER = "IPresenter.java";
+    public static final String BASE_PRESENTER = "BasePresenterImpl.java";
+
+    public static final String CONTRACT = "Contract";
 
 }

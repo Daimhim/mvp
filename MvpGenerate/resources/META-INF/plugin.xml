@@ -33,6 +33,9 @@
     <action id="org.daimhim.mepgenerate.action.MvpGenerate" class="org.daimhim.mepgenerate.action.MvpGenerate" text="MvpGenerate" description="Mvp Generate">
       <add-to-group group-id="GenerateGroup" anchor="last"/>
     </action>
+    <action id="org.daimhim.mepgenerate.test.TestAction" class="org.daimhim.mepgenerate.test.TestAction" text="TestAction" description="Mvp Generate TestAction">
+      <add-to-group group-id="GenerateGroup" anchor="last"/>
+    </action>
   </actions>
 
 </idea-plugin>
