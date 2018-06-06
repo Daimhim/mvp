@@ -7,6 +7,7 @@ import java.util.Objects;
 public class MvpGeneratePresenter {
 
     public PsiClass createContract(String className,PsiDirectory directory,String packageName){
+
         PsiClass psiClass = JavaDirectoryService.getInstance().createInterface(directory, className);
         //设置修饰属性
         Objects.requireNonNull(psiClass.getModifierList()).setModifierProperty(PsiModifier.PUBLIC, true);
@@ -21,4 +22,6 @@ public class MvpGeneratePresenter {
     public void followContract(){
 
     }
+
+
 }

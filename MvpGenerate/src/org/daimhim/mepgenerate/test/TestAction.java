@@ -24,7 +24,7 @@ public class TestAction extends BaseGenerateAction {
     }
 
     @Override
-    public void actionPerformed(AnActionEvent event) {
+    public void actionPerformed(@NotNull AnActionEvent event) {
         super.actionPerformed(event);
         Project project = event.getData(PlatformDataKeys.PROJECT);
         Editor editor = event.getData(PlatformDataKeys.EDITOR);

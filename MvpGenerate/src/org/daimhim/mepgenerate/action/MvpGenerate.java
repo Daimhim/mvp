@@ -50,12 +50,7 @@ public class MvpGenerate extends BaseGenerateAction {
         PsiFile mFile = PsiUtilBase.getPsiFileInEditor(editor, project);
         PsiClass psiClass = getTargetClass(editor, mFile);
         VirtualFile virtualFile = event.getData(PlatformDataKeys.VIRTUAL_FILE);
-        WriteCommandAction.runWriteCommandAction(project, new Runnable() {
-            @Override
-            public void run() {
-//                mvpGeneratePresenter.
-            }
-        });
+
     }
 
     //根据路径获取包名
