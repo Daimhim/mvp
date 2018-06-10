@@ -5,33 +5,28 @@ import com.intellij.codeInsight.generation.actions.BaseGenerateAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.command.WriteCommandAction;
-import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.impl.DocumentImpl;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.wm.StatusBar;
+import com.intellij.openapi.wm.WindowManager;
 import com.intellij.psi.*;
-import com.intellij.psi.impl.JavaPsiFacadeImpl;
-import com.intellij.psi.impl.file.impl.JavaFileManager;
-import com.intellij.psi.search.FilenameIndex;
-import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.impl.file.PsiDirectoryFactory;
+import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.util.PsiTypesUtil;
 import com.intellij.psi.util.PsiUtilBase;
-import groovy.json.internal.ArrayUtils;
-import kotlin.reflect.jvm.internal.impl.serialization.jvm.JvmModuleProtoBuf;
-import org.codehaus.groovy.runtime.ArrayUtil;
+import com.intellij.util.IncorrectOperationException;
 import org.daimhim.mepgenerate.GlobalVariables;
 import org.daimhim.mepgenerate.help.VirtualFileHelp;
 
 import java.util.ArrayList;
-import java.util.List;
 
-public class MvpGenerate extends BaseGenerateAction {
+public class MvpGenerate extends BaseGenerateAction implements MvpGenerateContract.View{
 
-
+    private ArrayList<PsiField> mPsiFields;
     private MvpGeneratePresenter mvpGeneratePresenter;
+    private Project mProject;
 
     public MvpGenerate() {
         super(null);
@@ -45,59 +40,31 @@ public class MvpGenerate extends BaseGenerateAction {
     public void actionPerformed(AnActionEvent event) {
         // TODO: insert org.daimhim.mepgenerate.action logic here
         mvpGeneratePresenter = new MvpGeneratePresenter();
-        Project project = event.getData(PlatformDataKeys.PROJECT);
+        mvpGeneratePresenter.startView(this);
+        mProject = event.getData(PlatformDataKeys.PROJECT);
         Editor editor = event.getData(PlatformDataKeys.EDITOR);
-        PsiFile mFile = PsiUtilBase.getPsiFileInEditor(editor, project);
+        PsiFile mFile = PsiUtilBase.getPsiFileInEditor(editor, mProject);
         PsiClass psiClass = getTargetClass(editor, mFile);
         VirtualFile virtualFile = event.getData(PlatformDataKeys.VIRTUAL_FILE);
-
+        mvpGeneratePresenter.setTagParameter(mProject,virtualFile,psiClass);
+        WriteCommandAction.runWriteCommandAction(mProject,mvpGeneratePresenter);
     }
 
-    //根据路径获取包名
-    public String getPackageName(VirtualFile data) {
-        if (null == data) return null;
-        String path = data.getPath();
-        return (path.substring(path.indexOf("java/") + "java/".length(), path.length())).replace("/", ".");
+    @Override
+    public String showInputDialog(String message, String title) {
+        return Messages.showInputDialog(mProject, message,
+                title, Messages.getQuestionIcon());
     }
 
-    /**
-     * 获取工作目录路径
-     * @param data
-     * @return
-     */
-    public String getWorkList(VirtualFile data){
-        return data.getPath().substring(0,data.getPath().indexOf("src/main/java"));
+    @Override
+    public void showErrorDialog(String message, String title) {
+        Messages.showErrorDialog(message,title);
     }
 
-    /**
-     * 检查当前类中是否存在P层
-     * @param psiClass 目标类
-     * @return  返回值
-     */
-    public boolean checkPastPresenter(PsiClass psiClass){
-        PsiField[] fields = psiClass.getFields();
-        for (int i = 0; i < fields.length; i++) {
-            PsiField field = fields[i];
-            System.out.println(field.getName()+"  "+ field.getType()+"     "+field.getNameIdentifier().getText());
-
-        }
-        return false;
+    @Override
+    public void showStatusNotice(String message) {
+        WindowManager.getInstance().getStatusBar(mProject).setInfo(message);
     }
 
-    private static String getPsiClass(PsiClass psiClass){
-        String[] nameSuffix = {
-                "Activity",
-                "View",
-                "Dialog",
-                "Fragment",
-                "PopupWindow"
-        };
-        String name = psiClass.getQualifiedName();
-        for (int i = 0; i < nameSuffix.length; i++) {
-            if (null!=name && name.endsWith(nameSuffix[i])){
-                return name.substring(0,name.length() - nameSuffix[i].length());
-            }
-        }
-        return name;
-    }
+
 }
