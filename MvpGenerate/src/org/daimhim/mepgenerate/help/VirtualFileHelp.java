@@ -61,9 +61,14 @@ public class VirtualFileHelp {
     public static String getPackageName(VirtualFile data) {
         if (null == data) return null;
         String path = data.getPath();
-        return (path.substring(path.indexOf("java/") + "java/".length(), path.length()))
-                .replace("/", ".")
-                .replace("."+data.getName(),"");
+        if (data.isDirectory()){
+            return (path.substring(path.indexOf("java/") + "java/".length(), path.length()))
+                    .replace("/", ".");
+        }else {
+            return (path.substring(path.indexOf("java/") + "java/".length(), path.length()))
+                    .replace("/", ".")
+                    .replace("."+data.getName(),"");
+        }
     }
 
     /**

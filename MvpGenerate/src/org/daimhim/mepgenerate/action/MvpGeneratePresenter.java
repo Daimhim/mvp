@@ -1,25 +1,16 @@
 package org.daimhim.mepgenerate.action;
 
-import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
-import com.intellij.psi.impl.PsiFileEx;
-import com.intellij.psi.impl.PsiFileFactoryImpl;
 import com.intellij.psi.impl.file.PsiDirectoryFactory;
-import com.intellij.psi.impl.file.PsiFileImplUtil;
-import com.intellij.psi.impl.source.PsiFileImpl;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.psi.util.PsiTypesUtil;
-import com.intellij.psi.util.TypeConversionUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.daimhim.mepgenerate.GlobalVariables;
 import org.daimhim.mepgenerate.help.VirtualFileHelp;
 
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Objects;
 
 public class MvpGeneratePresenter implements Runnable {
     /**
@@ -39,9 +30,10 @@ public class MvpGeneratePresenter implements Runnable {
     private PsiClass mPImpl;
     private PsiClass mVImpl;
 
+    PsiDirectory mMvpPathfile;
+
     Project mProject;
     VirtualFile mVirtualFile;
-    PsiClass mTagPsiClass;
 
     private MvpGenerateContract.View mView;
     public void startView(MvpGenerateContract.View view){
@@ -50,24 +42,8 @@ public class MvpGeneratePresenter implements Runnable {
     public void setTagParameter(Project project, VirtualFile virtualFile, PsiClass tagPsiClass) {
         mProject = project;
         mVirtualFile = virtualFile;
-        mTagPsiClass = tagPsiClass;
-    }
-
-    public PsiClass createContract(String className, PsiDirectory directory, String packageName) {
-
-        PsiClass psiClass = JavaDirectoryService.getInstance().createInterface(directory, className);
-        //设置修饰属性
-        Objects.requireNonNull(psiClass.getModifierList()).setModifierProperty(PsiModifier.PUBLIC, true);
-        ((PsiJavaFile) psiClass.getContainingFile()).setPackageName(packageName);
-        return psiClass;
-    }
-
-    public void registrationContract() {
-
-    }
-
-    public void followContract() {
-
+        mVImpl = tagPsiClass;
+        mMvpPathfile = PsiDirectoryFactory.getInstance(mProject).createDirectory(mVirtualFile).getParentDirectory();
     }
 
     @Override
@@ -87,19 +63,28 @@ public class MvpGeneratePresenter implements Runnable {
                 mIPresenter = PsiTreeUtil.findChildOfAnyType(PsiManager.getInstance(mProject).findFile(file), PsiClass.class);
             }
         }
-        String defClassName = getViewPsiClassName(mTagPsiClass);
-        ArrayList<PsiField> psiFields = checkPastPresenter(mTagPsiClass, mIPresenter);
+        String defClassName = getViewPsiClassName(mVImpl);
+        ArrayList<PsiField> psiFields = checkPastPresenter(mVImpl, mIPresenter);
         while (!isClassNameContains(psiFields,defClassName)) {
             defClassName = mView.showInputDialog("默认类名错误", "错误：默认类名已被占用");
         }
+        if (!defClassName.equals(getViewPsiClassName(mVImpl))){
+            try {
+                mVirtualFile = mVirtualFile.getParent().createChildDirectory(this,defClassName);
+                mMvpPathfile = PsiDirectoryFactory.getInstance(mProject).createDirectory(mVirtualFile);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         try {
-
+            //获取包名
+            String packageName = VirtualFileHelp.getPackageName(mVirtualFile);
             //创建合约
             mView.showStatusNotice("正在创建合约...");
             mC = JavaDirectoryService.getInstance().createInterface(getDirectory(),
                     defClassName + GlobalVariables.CONTRACT);
             mC.getModifierList().setModifierProperty(PsiModifier.PUBLIC, true);
-            ((PsiJavaFile) mC.getContainingFile()).setPackageName(VirtualFileHelp.getPackageName(mVirtualFile));
+            ((PsiJavaFile) mC.getContainingFile()).setPackageName(packageName);
 
 
             //创建View病实现IView接口
@@ -125,28 +110,33 @@ public class MvpGeneratePresenter implements Runnable {
             //设置修饰属性
             mPImpl.getModifierList().setModifierProperty(PsiModifier.PUBLIC, true);
             PsiJavaFile containingFile = (PsiJavaFile) mPImpl.getContainingFile();
-            containingFile.setPackageName(VirtualFileHelp.getPackageName(mVirtualFile));
+            containingFile.setPackageName(packageName);
             containingFile.getImportList().add(elementFactory.createImportStatement(mP));
-
+            //V层实现合同
+            mVImpl.getImplementsList().add(elementFactory.createClassReferenceElement(mV));
             //增加合同变量到双方
             //添加P变量到V
             mView.showStatusNotice("正在增加合同变量到双方...");
-            mTagPsiClass.add(elementFactory.createField("m" + defClassName + GlobalVariables.PRESENTER,
+            mVImpl.add(elementFactory.createField("m" + defClassName + GlobalVariables.PRESENTER,
                     elementFactory.createType(mP)));
-            if (!mC.getParent().getParent().equals(mTagPsiClass.getParent().getParent())) {
-                containingFile = (PsiJavaFile) mTagPsiClass.getContainingFile();
-                containingFile.getImportList().add(elementFactory.createImportStatement(mP));
+            if (!mC.getParent().getParent().equals(mVImpl.getParent().getParent())
+                    || mC.getParent().getParent().getParent().equals(mVImpl.getParent().getParent())) {
+//                containingFile = (PsiJavaFile) mVImpl.getContainingFile();
+//                containingFile.getImportList().add(elementFactory.createImportStatement(mP));
+                System.out.println(mC.getParent() + " 123   "+ mVImpl.getParent());
             }
             //添加V变量到P
             mPImpl.add(elementFactory.createField("m" + defClassName + GlobalVariables.PRESENTER,
                     elementFactory.createType(mV)));
-            if (!mC.getParent().getParent().equals(mPImpl.getParent().getParent())) {
-                containingFile = (PsiJavaFile) mPImpl.getContainingFile();
-                containingFile.getImportList().add(elementFactory.createImportStatement(mV));
+            if (!mC.getParent().getParent().equals(mPImpl.getParent().getParent())
+                    || mC.getParent().getParent().getParent().equals(mPImpl.getParent().getParent())) {
+//                containingFile = (PsiJavaFile) mPImpl.getContainingFile();
+//                containingFile.getImportList().add(elementFactory.createImportStatement(mV));
+                System.out.println(mC.getParent() + "  456  "+ mPImpl.getParent());
             }
 
         } catch (IncorrectOperationException e) {
-            Messages.showErrorDialog("创建合约失败，为什么失败？我哪知道啊！", "错误：创建合约失败");
+            mView.showErrorDialog("创建合约失败，为什么失败？我哪知道啊！", "错误：创建合约失败");
         }
     }
 
@@ -169,7 +159,7 @@ public class MvpGeneratePresenter implements Runnable {
      * @return
      */
     private PsiDirectory getDirectory() {
-        return PsiDirectoryFactory.getInstance(mProject).createDirectory(mVirtualFile).getParentDirectory();
+        return mMvpPathfile;
     }
 
     private String getViewPsiClassName(PsiClass psiClass) {
