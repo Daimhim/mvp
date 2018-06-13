@@ -9,21 +9,9 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.psi.*;
-import com.intellij.psi.impl.file.PsiDirectoryFactory;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.psi.util.PsiTypesUtil;
 import com.intellij.psi.util.PsiUtilBase;
-import com.intellij.util.IncorrectOperationException;
-import io.reactivex.Observable;
-import io.reactivex.Scheduler;
-import io.reactivex.functions.Consumer;
-import io.reactivex.schedulers.Schedulers;
-import org.daimhim.mepgenerate.GlobalVariables;
-import org.daimhim.mepgenerate.help.VirtualFileHelp;
-import org.fest.swing.util.Pair;
 
 import java.util.ArrayList;
 
@@ -52,7 +40,12 @@ public class MvpGenerate extends BaseGenerateAction implements MvpGenerateContra
         PsiClass psiClass = getTargetClass(editor, mFile);
         VirtualFile virtualFile = event.getData(PlatformDataKeys.VIRTUAL_FILE);
         mvpGeneratePresenter.setTagParameter(mProject,virtualFile,psiClass);
-        WriteCommandAction.runWriteCommandAction(mProject,mvpGeneratePresenter);
+        String mDefClassName = mvpGeneratePresenter.inputMvpName();
+        if (mDefClassName == null || "".equals(mDefClassName)){
+            showErrorDialog("下次再玩我，我打死你","错误：有人作死");
+        }else {
+            WriteCommandAction.runWriteCommandAction(mProject, mvpGeneratePresenter);
+        }
     }
 
     @Override

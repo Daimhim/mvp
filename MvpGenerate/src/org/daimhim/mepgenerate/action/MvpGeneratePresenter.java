@@ -36,6 +36,8 @@ public class MvpGeneratePresenter implements Runnable {
     VirtualFile mVirtualFile;
 
     private MvpGenerateContract.View mView;
+    private String mDefClassName;
+
     public void startView(MvpGenerateContract.View view){
         mView = view;
     }
@@ -45,11 +47,7 @@ public class MvpGeneratePresenter implements Runnable {
         mVImpl = tagPsiClass;
         mMvpPathfile = PsiDirectoryFactory.getInstance(mProject).createDirectory(mVirtualFile).getParentDirectory();
     }
-
-    @Override
-    public void run() {
-        PsiElementFactory elementFactory = JavaPsiFacade
-                .getElementFactory(mProject);
+    public String inputMvpName(){
         //找出基类 V 和 P
         ArrayList<VirtualFile> tagVirtualFile = VirtualFileHelp.findTagVirtualFile(mVirtualFile,
                 GlobalVariables.IVIEW + GlobalVariables.JAVA,
@@ -63,14 +61,20 @@ public class MvpGeneratePresenter implements Runnable {
                 mIPresenter = PsiTreeUtil.findChildOfAnyType(PsiManager.getInstance(mProject).findFile(file), PsiClass.class);
             }
         }
-        String defClassName = getViewPsiClassName(mVImpl);
+        mDefClassName = getViewPsiClassName(mVImpl);
         ArrayList<PsiField> psiFields = checkPastPresenter(mVImpl, mIPresenter);
-        while (!isClassNameContains(psiFields,defClassName)) {
-            defClassName = mView.showInputDialog("默认类名错误", "错误：默认类名已被占用");
+        while (!isClassNameContains(psiFields, mDefClassName)) {
+            mDefClassName = mView.showInputDialog("默认类名错误", "错误：默认类名已被占用");
         }
-        if (!defClassName.equals(getViewPsiClassName(mVImpl))){
+        return mDefClassName;
+    }
+    @Override
+    public void run() {
+        PsiElementFactory elementFactory = JavaPsiFacade
+                .getElementFactory(mProject);
+        if (!mDefClassName.equals(getViewPsiClassName(mVImpl))){
             try {
-                mVirtualFile = mVirtualFile.getParent().createChildDirectory(this,defClassName);
+                mVirtualFile = mVirtualFile.getParent().createChildDirectory(this,mDefClassName);
                 mMvpPathfile = PsiDirectoryFactory.getInstance(mProject).createDirectory(mVirtualFile);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -82,7 +86,7 @@ public class MvpGeneratePresenter implements Runnable {
             //创建合约
             mView.showStatusNotice("正在创建合约...");
             mC = JavaDirectoryService.getInstance().createInterface(getDirectory(),
-                    defClassName + GlobalVariables.CONTRACT);
+                    mDefClassName + GlobalVariables.CONTRACT);
             mC.getModifierList().setModifierProperty(PsiModifier.PUBLIC, true);
             ((PsiJavaFile) mC.getContainingFile()).setPackageName(packageName);
 
@@ -105,7 +109,7 @@ public class MvpGeneratePresenter implements Runnable {
             //创建PresenterImpl
             mView.showStatusNotice("正在创建PresenterImpl...");
             mPImpl = JavaDirectoryService.getInstance().createClass(getDirectory(),
-                    defClassName + GlobalVariables.BASE_PRESENTER);
+                    mDefClassName + GlobalVariables.BASE_PRESENTER);
             mPImpl.getImplementsList().add(elementFactory.createClassReferenceElement(mP));
             //设置修饰属性
             mPImpl.getModifierList().setModifierProperty(PsiModifier.PUBLIC, true);
@@ -117,7 +121,7 @@ public class MvpGeneratePresenter implements Runnable {
             //增加合同变量到双方
             //添加P变量到V
             mView.showStatusNotice("正在增加合同变量到双方...");
-            mVImpl.add(elementFactory.createField("m" + defClassName + GlobalVariables.PRESENTER,
+            mVImpl.add(elementFactory.createField("m" + mDefClassName + GlobalVariables.PRESENTER,
                     elementFactory.createType(mP)));
             if (!mC.getParent().getParent().equals(mVImpl.getParent().getParent())
                     || mC.getParent().getParent().getParent().equals(mVImpl.getParent().getParent())) {
@@ -126,7 +130,7 @@ public class MvpGeneratePresenter implements Runnable {
                 System.out.println(mC.getParent() + " 123   "+ mVImpl.getParent());
             }
             //添加V变量到P
-            mPImpl.add(elementFactory.createField("m" + defClassName + GlobalVariables.PRESENTER,
+            mPImpl.add(elementFactory.createField("m" + mDefClassName + GlobalVariables.PRESENTER,
                     elementFactory.createType(mV)));
             if (!mC.getParent().getParent().equals(mPImpl.getParent().getParent())
                     || mC.getParent().getParent().getParent().equals(mPImpl.getParent().getParent())) {
@@ -141,6 +145,9 @@ public class MvpGeneratePresenter implements Runnable {
     }
 
     private boolean isClassNameContains(ArrayList<PsiField> psiFields,String className){
+        if (null==className || "".equals(className)){
+            return true;
+        }
         for (int i = 0; i < psiFields.size(); i++) {
             if (psiFields.get(i).getName().contains(className)) {
                 return false;
