@@ -1,5 +1,7 @@
-package org.daimhim.mepgenerate.action;
+package org.daimhim.mepgenerate.action.mvpgenerate;
 
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.impl.ModuleManagerImpl;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
@@ -51,9 +53,23 @@ public class MvpGeneratePresenter implements Runnable {
         //找出基类 V 和 P
         ArrayList<VirtualFile> tagVirtualFile = VirtualFileHelp.findTagVirtualFile(mVirtualFile,
                 GlobalVariables.IVIEW + GlobalVariables.JAVA,
-                GlobalVariables.IPRESENTER + GlobalVariables.JAVA);
+                GlobalVariables.IPRESENTER + GlobalVariables.JAVA,
+                GlobalVariables.BVIEW + GlobalVariables.JAVA,
+                GlobalVariables.BPRESENTER + GlobalVariables.JAVA);
+        if (tagVirtualFile.isEmpty()){
+            Module[] modules = ModuleManagerImpl.getInstanceImpl(mProject).getModules();
+            for (int i = 0; i < modules.length; i++) {
+                System.out.println(modules[i].getName());
+            }
+        }
         for (int i = 0; i < tagVirtualFile.size(); i++) {
             VirtualFile file = tagVirtualFile.get(i);
+            if ((GlobalVariables.BVIEW + GlobalVariables.JAVA).equals(file.getName())) {
+                mIView = PsiTreeUtil.findChildOfAnyType(PsiManager.getInstance(mProject).findFile(file), PsiClass.class);
+            }
+            if ((GlobalVariables.BPRESENTER + GlobalVariables.JAVA).equals(file.getName())) {
+                mIPresenter = PsiTreeUtil.findChildOfAnyType(PsiManager.getInstance(mProject).findFile(file), PsiClass.class);
+            }
             if ((GlobalVariables.IVIEW + GlobalVariables.JAVA).equals(file.getName())) {
                 mIView = PsiTreeUtil.findChildOfAnyType(PsiManager.getInstance(mProject).findFile(file), PsiClass.class);
             }
@@ -175,7 +191,8 @@ public class MvpGeneratePresenter implements Runnable {
                 "View",
                 "Dialog",
                 "Fragment",
-                "PopupWindow"
+                "PopupWindow",
+                "Action"
         };
         String name = psiClass.getName();
         for (int i = 0; i < nameSuffix.length; i++) {

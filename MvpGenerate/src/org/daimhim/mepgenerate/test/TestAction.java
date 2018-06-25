@@ -7,6 +7,7 @@ import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.module.impl.ModuleManagerImpl;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
@@ -62,6 +63,11 @@ public class TestAction extends BaseGenerateAction {
         Module moduleForFile = ModuleUtil.findModuleForFile(virtualFile, project);
 
         System.out.println(moduleForFile.getModuleFilePath());
+
+        Module[] modules = ModuleManagerImpl.getInstanceImpl(project).getModules();
+        for (int i = 0; i < modules.length; i++) {
+            System.out.println(modules[i].getName());
+        }
 
     }
 

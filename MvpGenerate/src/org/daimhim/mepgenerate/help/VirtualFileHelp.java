@@ -1,5 +1,7 @@
 package org.daimhim.mepgenerate.help;
 
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileUrlChangeAdapter;
@@ -80,4 +82,13 @@ public class VirtualFileHelp {
     public static String getWorkList(VirtualFile data) {
         return data.getPath().substring(0, data.getPath().indexOf("src/main/java"));
     }
+
+    public static ArrayList<VirtualFile> forTagInModule(Module module,String... findFileName){
+        return forVirtualFile("src",
+                findFileName,null,
+                true,
+                new ArrayList<>(),
+                module.getModuleFile().findChild("src"));
+    }
+
 }

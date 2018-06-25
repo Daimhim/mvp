@@ -1,4 +1,4 @@
-package org.daimhim.mepgenerate.action;
+package org.daimhim.mepgenerate.action.mvpgenerate;
 
 import com.intellij.codeInsight.CodeInsightActionHandler;
 import com.intellij.codeInsight.generation.actions.BaseGenerateAction;

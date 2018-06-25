@@ -9,6 +9,9 @@ public class GlobalVariables {
     public static final String IVIEW = "IView";
     public static final String IPRESENTER = "IPresenter";
 
+    public static final String BVIEW = "BaseView";
+    public static final String BPRESENTER = "BasePresenter";
+
     public static final String BASE_PRESENTER = "PresenterImpl";
 
     public static final String VIEW = "View";

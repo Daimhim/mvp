@@ -1,4 +1,4 @@
-package org.daimhim.mepgenerate.action;
+package org.daimhim.mepgenerate.action.mvpgenerate;
 
 import org.daimhim.mepgenerate.mvp.IPresenter;
 import org.daimhim.mepgenerate.mvp.IView;

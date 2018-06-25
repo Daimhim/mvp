@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>com.your.company.unique.plugin.id</id>
   <name>Plugin display name here</name>
-  <version>1.0</version>
+  <version>1.3</version>
   <vendor email="support@yourcompany.com" url="http://www.yourcompany.com">YourCompany</vendor>
 
   <description><![CDATA[
@@ -30,12 +30,17 @@
 
   <actions>
     <!-- Add your actions here -->
-    <action id="org.daimhim.mepgenerate.action.MvpGenerate" class="org.daimhim.mepgenerate.action.MvpGenerate" text="MvpGenerate" description="Mvp Generate">
+    <action id="org.daimhim.mepgenerate.action.mvpgenerate.MvpGenerate" class="org.daimhim.mepgenerate.action.mvpgenerate.MvpGenerate" text="MvpGenerate" description="Mvp Generate">
       <add-to-group group-id="GenerateGroup" anchor="last"/>
+    </action>
+    <action id="org.daimhim.mepgenerate.action.newmvp.NewMvpAction" class="org.daimhim.mepgenerate.action.newmvp.NewMvpAction" description="New Mvp"
+            text="NewMvp">
+      <add-to-group group-id="NewGroup" anchor="first"/>
     </action>
     <action id="org.daimhim.mepgenerate.test.TestAction" class="org.daimhim.mepgenerate.test.TestAction" text="TestAction" description="Mvp Generate TestAction">
       <add-to-group group-id="GenerateGroup" anchor="last"/>
     </action>
+
   </actions>
 
 </idea-plugin>
