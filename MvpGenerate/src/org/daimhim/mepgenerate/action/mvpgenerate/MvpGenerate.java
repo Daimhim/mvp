@@ -8,12 +8,14 @@ import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.ui.SelectFromListDialog;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiUtilBase;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MvpGenerate extends BaseGenerateAction implements MvpGenerateContract.View{
 
@@ -42,7 +44,7 @@ public class MvpGenerate extends BaseGenerateAction implements MvpGenerateContra
         mvpGeneratePresenter.setTagParameter(mProject,virtualFile,psiClass);
         String mDefClassName = mvpGeneratePresenter.inputMvpName();
         if (mDefClassName == null || "".equals(mDefClassName)){
-            showErrorDialog("下次再玩我，我打死你","错误：有人作死");
+            showErrorDialog("请输入类名","请输入类名");
         }else {
             WriteCommandAction.runWriteCommandAction(mProject, mvpGeneratePresenter);
         }
@@ -62,6 +64,12 @@ public class MvpGenerate extends BaseGenerateAction implements MvpGenerateContra
     @Override
     public void showStatusNotice(String message) {
         WindowManager.getInstance().getStatusBar(mProject).setInfo(message);
+    }
+
+    @Override
+    public String getUserSelectClass(List<String> list) {
+//        new SelectFromListDialog()
+        return null;
     }
 
 
