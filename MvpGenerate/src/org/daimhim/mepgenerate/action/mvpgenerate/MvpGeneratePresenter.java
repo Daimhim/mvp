@@ -63,7 +63,6 @@ public class MvpGeneratePresenter implements Runnable {
             }
         }
         ArrayList<String> list = new ArrayList<>();
-
         for (int i = 0; i < tagVirtualFile.size(); i++) {
             VirtualFile file = tagVirtualFile.get(i);
             if ((GlobalVariables.BVIEW + GlobalVariables.JAVA).equals(file.getName())) {

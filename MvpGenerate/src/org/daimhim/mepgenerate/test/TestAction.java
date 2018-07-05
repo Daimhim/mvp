@@ -5,7 +5,9 @@ import com.intellij.codeInsight.generation.actions.BaseGenerateAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.module.ModifiableModuleModel;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.module.impl.ModuleManagerImpl;
 import com.intellij.openapi.project.Project;
@@ -13,7 +15,16 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiUtilBase;
+import com.intellij.util.graph.Graph;
 import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
 
 public class TestAction extends BaseGenerateAction {
     public TestAction() {
@@ -26,15 +37,11 @@ public class TestAction extends BaseGenerateAction {
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent event) {
-        super.actionPerformed(event);
         Project project = event.getData(PlatformDataKeys.PROJECT);
         Editor editor = event.getData(PlatformDataKeys.EDITOR);
         PsiFile mFile = PsiUtilBase.getPsiFileInEditor(editor, project);
         PsiClass psiClass = getTargetClass(editor, mFile);
         VirtualFile virtualFile = event.getData(PlatformDataKeys.VIRTUAL_FILE);
-
-
-
         System.out.println("psiClass.getName:"+psiClass.getName());
         System.out.println("project.getBasePath:"+project.getBasePath());
         System.out.println("virtualFile.getPresentableName:"+virtualFile.getPresentableName());
@@ -60,15 +67,37 @@ public class TestAction extends BaseGenerateAction {
 //        VirtualFile file = FileDocumentManager.getInstance().getFile(document);
 //        System.out.println("file.getName():"+file.getName());
 
+        System.out.println("-----moduleForFile---------");
         Module moduleForFile = ModuleUtil.findModuleForFile(virtualFile, project);
-
-        System.out.println(moduleForFile.getModuleFilePath());
-
+        System.out.println(moduleForFile.getName());
+        System.out.println("-----allDependentModules---------");
+        List<Module> allDependentModules = ModuleUtil.getAllDependentModules(moduleForFile);
+        for (int i = 0; i < allDependentModules.size(); i++) {
+            System.out.println(allDependentModules.get(i).getName());
+        }
+        System.out.println("---------getNodes--------");
+        Graph<Module> moduleGraph = ModuleManager.getInstance(project).moduleGraph();
+        Iterator<Module> iterator = moduleGraph.getNodes().iterator();
+        for (int i = 0; iterator.hasNext(); i++) {
+            System.out.println(iterator.next().getName());
+        }
+        System.out.println("---------getIn--------");
+        Iterator<Module> in = moduleGraph.getIn(moduleForFile);
+        while (in.hasNext()){
+            System.out.println(in.next().getName());
+        }
+        System.out.println("------modifiableModel-----------");
+        ModifiableModuleModel modifiableModel = ModuleManager.getInstance(project).getModifiableModel();
+        Module[] modules1 = modifiableModel.getModules();
+        for (int i = 0; i < modules1.length; i++) {
+            System.out.println(modules1[i].getName());
+        }
+//        ModuleManager.getInstance(project).;
+        System.out.println("-----------------");
         Module[] modules = ModuleManagerImpl.getInstanceImpl(project).getModules();
         for (int i = 0; i < modules.length; i++) {
             System.out.println(modules[i].getName());
         }
 
     }
-
 }
