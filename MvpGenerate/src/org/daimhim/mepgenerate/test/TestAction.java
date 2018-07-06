@@ -18,8 +18,10 @@ import com.intellij.psi.util.PsiUtilBase;
 import com.intellij.util.graph.Graph;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
+import java.io.*;
+import java.net.ConnectException;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Comparator;
@@ -42,24 +44,24 @@ public class TestAction extends BaseGenerateAction {
         PsiFile mFile = PsiUtilBase.getPsiFileInEditor(editor, project);
         PsiClass psiClass = getTargetClass(editor, mFile);
         VirtualFile virtualFile = event.getData(PlatformDataKeys.VIRTUAL_FILE);
-        System.out.println("psiClass.getName:"+psiClass.getName());
-        System.out.println("project.getBasePath:"+project.getBasePath());
-        System.out.println("virtualFile.getPresentableName:"+virtualFile.getPresentableName());
-        System.out.println("virtualFile.getCanonicalPath:"+virtualFile.getCanonicalPath());
-        System.out.println("virtualFile.getExtension:"+virtualFile.getExtension());
-        System.out.println("virtualFile.getParent:"+virtualFile.getParent());
-        System.out.println("virtualFile.getParent.getName():"+virtualFile.getParent().getName());
-        System.out.println("virtualFile.getPresentableUrl:"+virtualFile.getPresentableUrl());
+        System.out.println("psiClass.getName:" + psiClass.getName());
+        System.out.println("project.getBasePath:" + project.getBasePath());
+        System.out.println("virtualFile.getPresentableName:" + virtualFile.getPresentableName());
+        System.out.println("virtualFile.getCanonicalPath:" + virtualFile.getCanonicalPath());
+        System.out.println("virtualFile.getExtension:" + virtualFile.getExtension());
+        System.out.println("virtualFile.getParent:" + virtualFile.getParent());
+        System.out.println("virtualFile.getParent.getName():" + virtualFile.getParent().getName());
+        System.out.println("virtualFile.getPresentableUrl:" + virtualFile.getPresentableUrl());
         String path = virtualFile.getPath();
-        System.out.println("virtualFile.getPath:"+ path);
+        System.out.println("virtualFile.getPath:" + path);
         String substring = path.substring(0, path.indexOf("src/main/java"));
-        System.out.println("substring:"+substring);
-        System.out.println("project.getProjectFile:"+project.getProjectFile());
-        System.out.println("project.getWorkspaceFile:"+project.getWorkspaceFile());
-        System.out.println("project.getBaseDir:"+project.getBaseDir());
-        System.out.println("project.getProjectFilePath:"+project.getProjectFilePath());
-        System.out.println("psiClass.getQualifiedName:"+psiClass.getQualifiedName());
-        System.out.println("project.getWorkspaceFile().getPath():"+project.getWorkspaceFile());
+        System.out.println("substring:" + substring);
+        System.out.println("project.getProjectFile:" + project.getProjectFile());
+        System.out.println("project.getWorkspaceFile:" + project.getWorkspaceFile());
+        System.out.println("project.getBaseDir:" + project.getBaseDir());
+        System.out.println("project.getProjectFilePath:" + project.getProjectFilePath());
+        System.out.println("psiClass.getQualifiedName:" + psiClass.getQualifiedName());
+        System.out.println("project.getWorkspaceFile().getPath():" + project.getWorkspaceFile());
 //        PsiPackage mvp = JavaPsiFacade.getInstance(project).findPackage("mvp");
 //        System.out.println("mvp:"+mvp.containsClassNamed("BaseView"));
 //        System.out.println("mvp:"+mvp.getText());
@@ -83,7 +85,7 @@ public class TestAction extends BaseGenerateAction {
         }
         System.out.println("---------getIn--------");
         Iterator<Module> in = moduleGraph.getIn(moduleForFile);
-        while (in.hasNext()){
+        while (in.hasNext()) {
             System.out.println(in.next().getName());
         }
         System.out.println("------modifiableModel-----------");
@@ -99,5 +101,80 @@ public class TestAction extends BaseGenerateAction {
             System.out.println(modules[i].getName());
         }
 
+    }
+
+
+    public static void main(String[] args) {
+        doInBackground("http://192.168.1.83:8080/zsmapi1.12.0/user/savaData",
+                "G:\\meyki-zhshm-design\\UI\\天天有用V1.0\\公共部分\\logo\\Android\\drawable-hdpi\\ic_launcher.png",
+                "out",
+                "POST");
+    }
+
+    /**
+     * @param strings [0] url [1] filepatch [2] in or out [3] requestType
+     *                [4] ReadTimeout [5] ConnectTimeout
+     * @return
+     */
+    protected static Integer doInBackground(String... strings) {
+        HttpURLConnection connection = null;
+        InputStream in = null;
+        OutputStream out = null;
+        InputStream callIn = null;
+        try {
+            URL url = new URL(strings[0]);
+            connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod(strings.length < 4 ? "GET" : strings[3]);
+            connection.setReadTimeout(strings.length < 5 ? 5000 : Integer.valueOf(strings[4]));
+            connection.setConnectTimeout(strings.length < 6 ? 10000 : Integer.valueOf(strings[5]));
+            connection.setDoInput(true);
+            connection.setDoOutput(true);
+            connection.connect();
+//            if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+            if ("in".equals(strings[2])) {
+                in = connection.getInputStream();
+                out = new FileOutputStream(new File(strings[1]));
+            } else {
+                out = connection.getOutputStream();
+                in = new FileInputStream(new File(strings[1]));
+                out.write("file=".getBytes());
+            }
+            byte[] buf = new byte[1024];
+            int ch;
+            while ((ch = in.read(buf)) != -1) {
+                out.write(buf, 0, ch);
+            }
+            out.flush();
+            out.close();
+            callIn = connection.getInputStream();
+            buf = new byte[callIn.available()];
+            callIn.read(buf);
+            System.out.println(new String(buf));
+//            }
+            return connection.getResponseCode();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (null != connection) {
+                connection.disconnect();
+            }
+            if (null != in) {
+                try {
+                    in.close();
+                } catch (IOException pE) {
+                    pE.printStackTrace();
+                }
+            }
+            if (null != out) {
+                try {
+                    out.close();
+                } catch (IOException pE) {
+                    pE.printStackTrace();
+                }
+            }
+        }
+        return HttpURLConnection.HTTP_NO_CONTENT;
     }
 }
