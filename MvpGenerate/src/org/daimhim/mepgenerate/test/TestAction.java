@@ -13,6 +13,7 @@ import com.intellij.openapi.module.impl.ModuleManagerImpl;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiUtilBase;
 import com.intellij.util.graph.Graph;
@@ -100,13 +101,16 @@ public class TestAction extends BaseGenerateAction {
         for (int i = 0; i < modules.length; i++) {
             System.out.println(modules[i].getName());
         }
-
+        PsiField[] allFields = psiClass.getAllFields();
+        for (int i = 0; i < allFields.length; i++) {
+            System.out.println("allFields:"+allFields[i].getName() + "   getType:"+allFields[i].getType().toString());
+        }
     }
 
 
     public static void main(String[] args) {
-        doInBackground("http://192.168.1.83:8080/zsmapi1.12.0/user/savaData",
-                "G:\\meyki-zhshm-design\\UI\\天天有用V1.0\\公共部分\\logo\\Android\\drawable-hdpi\\ic_launcher.png",
+        doInBackground("http://127.0.0.1:8000/app/home/upLoadFiles/",
+                "F:\\C++\\第二阶段 - C++入门\\C和C++与数据结构基础讲义.docx",
                 "out",
                 "POST");
     }

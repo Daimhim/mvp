@@ -1,5 +1,6 @@
 package org.daimhim.mepgenerate.action.mvpgenerate;
 
+import com.intellij.openapi.vfs.VirtualFile;
 import org.daimhim.mepgenerate.mvp.IPresenter;
 import org.daimhim.mepgenerate.mvp.IView;
 import org.jetbrains.annotations.Nls;
@@ -14,7 +15,7 @@ public interface MvpGenerateContract {
 
         void showStatusNotice(String message);
 
-        String getUserSelectClass(List<String> list);
+        VirtualFile getUserSelectClass(List<VirtualFile> list,String title);
     }
 
     interface Presenter extends IPresenter {
