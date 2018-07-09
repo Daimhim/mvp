@@ -109,8 +109,8 @@ public class TestAction extends BaseGenerateAction {
 
 
     public static void main(String[] args) {
-        doInBackground("http://127.0.0.1:8000/app/home/upLoadFiles/",
-                "F:\\C++\\第二阶段 - C++入门\\C和C++与数据结构基础讲义.docx",
+        doInBackground("",
+                "H:\\msdia80.dll",
                 "out",
                 "POST");
     }
@@ -133,6 +133,10 @@ public class TestAction extends BaseGenerateAction {
             connection.setConnectTimeout(strings.length < 6 ? 10000 : Integer.valueOf(strings[5]));
             connection.setDoInput(true);
             connection.setDoOutput(true);
+            //数据编码格式，这里utf-8
+            connection.setRequestProperty("Charset", "utf-8");
+            // 配置请求Content-Type
+            connection.setRequestProperty("Content-Type", "form-data");
             connection.connect();
 //            if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
             if ("in".equals(strings[2])) {
@@ -141,7 +145,7 @@ public class TestAction extends BaseGenerateAction {
             } else {
                 out = connection.getOutputStream();
                 in = new FileInputStream(new File(strings[1]));
-                out.write("file=".getBytes());
+//                out.write("file=".getBytes());
             }
             byte[] buf = new byte[1024];
             int ch;

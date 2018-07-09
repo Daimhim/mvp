@@ -51,7 +51,6 @@ public class NewMvpAction extends AnAction implements NewMvpActionContract.View 
         }else {
             mNewMvpActionPresenter.setTagParameter(mProject,PsiManagerImpl.getInstance(mProject).findDirectory(virtualFile.getParent()));
         }
-        mNewMvpActionPresenter.initMvpName();
         String mDefClassName = mNewMvpActionPresenter.initMvpName();
         if (mDefClassName == null || "".equals(mDefClassName)){
             showErrorDialog("请输入包名","请输入包名");
@@ -62,6 +61,7 @@ public class NewMvpAction extends AnAction implements NewMvpActionContract.View 
 
     public static boolean isNewMVPSimple(String path) {
         if (path.indexOf("/src/") < 0) return false;
+
         return true;
     }
 

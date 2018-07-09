@@ -1,12 +1,6 @@
 package org.daimhim.mepgenerate.action.mvpgenerate;
 
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
-import com.intellij.openapi.vfs.VirtualFileSystem;
-import com.intellij.openapi.vfs.newvfs.impl.VirtualFileImpl;
 import com.intellij.psi.PsiClass;
-import com.intellij.psi.impl.PsiClassImplUtil;
-import com.intellij.psi.util.PsiClassUtil;
 import org.daimhim.mepgenerate.GlobalVariables;
 
 import java.util.ArrayList;
@@ -43,7 +37,18 @@ public class MvpGenerateModel {
         strings.add("BaseActivity" + GlobalVariables.JAVA);
         strings.add("BaseFragment" + GlobalVariables.JAVA);
         strings.add("BaseDialog" + GlobalVariables.JAVA);
+        strings.add("MVPBaseActivity" + GlobalVariables.JAVA);
+        strings.add("MVPBaseFragmentActivity" + GlobalVariables.JAVA);
         return strings;
+    }
+    public String getBaseViewSuffix(String key){
+        Map<String,String> map = new HashMap<>();
+        map.put("BaseActivity","Activity");
+        map.put("MVPBaseActivity","Activity");
+        map.put("MVPBaseFragmentActivity","Activity");
+        map.put("BaseFragment","Fragment");
+        map.put("BaseDialog","Dialog");
+        return map.get(key);
     }
 
     public List<String> getBasePresenter(){

@@ -52,6 +52,13 @@ public class MvpGeneratePresenter implements Runnable {
         mMvpPathfile = PsiDirectoryFactory.getInstance(mProject).createDirectory(mVirtualFile).getParentDirectory();
     }
     public String inputMvpName(){
+        mDefClassName = getViewPsiClassName(mVImpl);
+        while (!isClassNameContains(mVImpl.getAllFields(), mDefClassName)) {
+            mDefClassName = mView.showInputDialog("默认类名错误", "错误：默认类名已被占用");
+        }
+        if (mDefClassName == null || "".equals(mDefClassName)){
+            return null;
+        }
         List<String> presenters = mModel.getPresenter();
         List<String> views = mModel.getView();
         List<String> basePresenters = mModel.getBasePresenter();
@@ -93,10 +100,6 @@ public class MvpGeneratePresenter implements Runnable {
         mIPresenter = chooseOneMore(presenter,GlobalVariables.IPRESENTER);
         mIView = chooseOneMore(view,GlobalVariables.IVIEW);
         mBasePresenter = chooseOneMore(basePresenter,GlobalVariables.BPRESENTER);
-        mDefClassName = getViewPsiClassName(mVImpl);
-        while (!isClassNameContains(mVImpl.getAllFields(), mDefClassName)) {
-            mDefClassName = mView.showInputDialog("默认类名错误", "错误：默认类名已被占用");
-        }
         return mDefClassName;
     }
     @Override
