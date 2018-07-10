@@ -31,8 +31,8 @@ public class ResourceImportTest {
     Map<String, String> mFiles;
     ExecutorService mExecutorService = null;
 
-    String fromFilePath = "H:\\formalProject\\meyki-zhshm\\code\\branches\\sclient-v1.16.0\\skt\\src\\main\\res";
-    String toFilePath = "G:\\meyki-zhshm-design\\UI\\天天有用V1.0\\01天天有用 主目录\\01首页\\03切图\\签到后领券弹层\\android";
+    String fromFilePath = "H:\\formalProject\\meyki-zhshm\\code\\branches\\sclient-v1.18.0\\skt\\src\\main\\res";
+    String toFilePath = "G:\\meyki-zhshm-design\\UI\\天天有用V1.0\\01天天有用 主目录\\03我的\\03切图\\android";
 
     void init() {
         mFromFile = new File(fromFilePath).listFiles();
@@ -42,8 +42,8 @@ public class ResourceImportTest {
 //        mFiles.put("digital_coupon_incentive_digital_coupon_bg.png", "激励数字券.png");
 //        mFiles.put("digital_coupon_available_balance_bg.png", "数字券可用余额.png");
 
-        mFiles.put("sign_in_dialog_bg.png", "签到后领券弹层背景.png");
-        mFiles.put("go_to_recommend.png", "去推荐.png");
+//        mFiles.put("sign_in_dialog_bg.png", "签到后领券弹层背景.png");
+        mFiles.put("digital_coupon_available_balance_bg.png", "数字券可用余额.png");
 //        mFiles.put("digital_coupon_share_sinaweibo.png", "微博-分享.png");
 //        mFiles.put("digital_coupon_share_wechat.png", "微信-分享.png");
     }

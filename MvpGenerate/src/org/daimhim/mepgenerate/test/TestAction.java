@@ -2,6 +2,7 @@ package org.daimhim.mepgenerate.test;
 
 import com.intellij.codeInsight.CodeInsightActionHandler;
 import com.intellij.codeInsight.generation.actions.BaseGenerateAction;
+import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.editor.Editor;
@@ -105,6 +106,7 @@ public class TestAction extends BaseGenerateAction {
         for (int i = 0; i < allFields.length; i++) {
             System.out.println("allFields:"+allFields[i].getName() + "   getType:"+allFields[i].getType().toString());
         }
+//        PropertiesComponent.getInstance(project)
     }
 
 

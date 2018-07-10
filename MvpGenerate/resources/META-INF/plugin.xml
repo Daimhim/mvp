@@ -41,6 +41,10 @@
       <add-to-group group-id="GenerateGroup" anchor="last"/>
     </action>
 
+      <action id="org.daimhim.mepgenerate.action.mvpsettings.MvpSettings" class="org.daimhim.mepgenerate.action.mvpsettings.MvpSettingsAction" text="MvpSettings"
+              description="MvpSettings">
+          <add-to-group group-id="FileMenu" anchor="before" relative-to-action="FileMainSettingsGroup"/>
+      </action>
   </actions>
 
 </idea-plugin>

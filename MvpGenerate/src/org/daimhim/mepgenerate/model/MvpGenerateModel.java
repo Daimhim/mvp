@@ -1,4 +1,4 @@
-package org.daimhim.mepgenerate.action.mvpgenerate;
+package org.daimhim.mepgenerate.model;
 
 import com.intellij.psi.PsiClass;
 import org.daimhim.mepgenerate.GlobalVariables;
@@ -14,6 +14,8 @@ public class MvpGenerateModel {
     public MvpGenerateModel() {
         init();
     }
+
+
 
     private void init() {
         baseClasss = new HashMap<>();

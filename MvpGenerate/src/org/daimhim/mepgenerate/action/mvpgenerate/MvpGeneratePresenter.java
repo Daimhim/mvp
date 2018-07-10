@@ -8,6 +8,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.daimhim.mepgenerate.GlobalVariables;
 import org.daimhim.mepgenerate.help.VirtualFileHelp;
+import org.daimhim.mepgenerate.model.MvpGenerateModel;
 
 import java.io.IOException;
 import java.util.ArrayList;
