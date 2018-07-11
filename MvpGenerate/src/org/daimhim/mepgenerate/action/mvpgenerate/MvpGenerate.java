@@ -80,7 +80,7 @@ public class MvpGenerate extends BaseGenerateAction implements MvpGenerateContra
         SelectFromListDialog demo = new SelectFromListDialog(mProject, list.toArray(), new SelectFromListDialog.ToStringAspect() {
             @Override
             public String getToStirng(Object o) {
-                return ((VirtualFile) o).getName();
+                return ((VirtualFile) o).getPath();
             }
         }, title, ListSelectionModel.SINGLE_SELECTION);
         demo.pack();

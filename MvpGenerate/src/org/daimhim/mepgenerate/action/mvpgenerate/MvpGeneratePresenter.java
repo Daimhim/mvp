@@ -262,10 +262,8 @@ public class MvpGeneratePresenter implements Runnable {
 
     private PsiClass chooseOneMore(List<VirtualFile> list,String title){
         VirtualFile tagFile = null;
-        if (list.size() > 1){
+        if (list.size() > 0){
             tagFile = mView.getUserSelectClass(list,title);
-        }else if (list.size() == 1){
-            tagFile = list.get(0);
         }
         if (null!=tagFile) {
             return PsiTreeUtil.findChildOfAnyType(
