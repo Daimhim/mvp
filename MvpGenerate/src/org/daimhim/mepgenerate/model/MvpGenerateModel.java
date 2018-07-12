@@ -1,8 +1,13 @@
 package org.daimhim.mepgenerate.model;
 
+import com.intellij.ide.util.PropertiesComponent;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
 import org.daimhim.mepgenerate.GlobalVariables;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,7 +15,7 @@ import java.util.Map;
 
 public class MvpGenerateModel {
     private Map<String,List<PsiClass>> baseClasss;
-
+    private Project mProject;
     public MvpGenerateModel() {
         init();
     }
@@ -20,7 +25,6 @@ public class MvpGenerateModel {
     private void init() {
         baseClasss = new HashMap<>();
     }
-
     public List<String> getView(){
         ArrayList<String> strings = new ArrayList<>();
         strings.add(GlobalVariables.BVIEW + GlobalVariables.JAVA);
@@ -58,6 +62,20 @@ public class MvpGenerateModel {
         strings.add("BasePresenterImpl" + GlobalVariables.JAVA);
         return strings;
     }
+
+    public List<VirtualFile> getLocalConfiguration(String key){
+        String[] values = PropertiesComponent.getInstance(mProject).getValues(key);
+        ArrayList<VirtualFile> list = new ArrayList<>();
+        VirtualFile virtualFile = null;
+        for (int i = 0; i < values.length; i++) {
+            virtualFile = LocalFileSystem.getInstance().findFileByIoFile(new File(values[i]));
+            if (virtualFile != null) {
+                list.add(virtualFile);
+            }
+        }
+        return list;
+    }
+
 
     public String[] getViewNameSuffix(){
         return new String[]{"Activity",

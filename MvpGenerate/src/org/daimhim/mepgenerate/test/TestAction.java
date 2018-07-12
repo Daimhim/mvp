@@ -6,12 +6,16 @@ import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.fileChooser.FileChooser;
+import com.intellij.openapi.fileChooser.FileChooserDescriptor;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.ModifiableModuleModel;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.module.impl.ModuleManagerImpl;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiField;
@@ -21,10 +25,7 @@ import com.intellij.util.graph.Graph;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
-import java.net.ConnectException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.*;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -107,14 +108,22 @@ public class TestAction extends BaseGenerateAction {
             System.out.println("allFields:"+allFields[i].getName() + "   getType:"+allFields[i].getType().toString());
         }
 //        PropertiesComponent.getInstance(project)
+        VirtualFile[] virtualFiles = FileChooser.chooseFiles(new FileChooserDescriptor(true, true, true, true, true, true)
+                , project, virtualFile);
+        for (int i = 0; i < virtualFiles.length; i++) {
+            System.out.println(virtualFiles[i].getPath());
+            System.out.println(virtualFiles[i].getUrl());
+            System.out.println(LocalFileSystem.getInstance().findFileByIoFile(new File(virtualFiles[i].getPath())).getName());
+        }
     }
 
 
     public static void main(String[] args) {
-        doInBackground("",
-                "H:\\msdia80.dll",
-                "out",
-                "POST");
+//        doInBackground("",
+//                "H:\\msdia80.dll",
+//                "out",
+//                "POST");
+
     }
 
     /**
