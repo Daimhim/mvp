@@ -80,7 +80,7 @@
               </component>
             </children>
           </splitpane>
-          <component id="78dd4" class="javax.swing.JLabel">
+          <component id="7aec0" class="javax.swing.JButton" binding="bt_add">
             <constraints>
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -88,7 +88,7 @@
               <text value="+"/>
             </properties>
           </component>
-          <component id="e4486" class="javax.swing.JLabel" binding="lb_delete">
+          <component id="54362" class="javax.swing.JButton" binding="lb_delete">
             <constraints>
               <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>

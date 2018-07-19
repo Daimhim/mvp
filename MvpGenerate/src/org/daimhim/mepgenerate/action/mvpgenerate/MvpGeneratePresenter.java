@@ -44,13 +44,13 @@ public class MvpGeneratePresenter implements Runnable {
 
     public void startView(MvpGenerateContract.View view){
         mView = view;
-        mModel = new MvpGenerateModel();
     }
     public void setTagParameter(Project project, VirtualFile virtualFile, PsiClass tagPsiClass) {
         mProject = project;
         mVirtualFile = virtualFile;
         mVImpl = tagPsiClass;
         mMvpPathfile = PsiDirectoryFactory.getInstance(mProject).createDirectory(mVirtualFile).getParentDirectory();
+        mModel = new MvpGenerateModel(mProject);
     }
     public String inputMvpName(){
         mDefClassName = getViewPsiClassName(mVImpl);

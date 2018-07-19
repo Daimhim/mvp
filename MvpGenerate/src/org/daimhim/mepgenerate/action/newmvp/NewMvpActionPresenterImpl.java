@@ -206,12 +206,12 @@ public class NewMvpActionPresenterImpl implements NewMvpActionContract.Presenter
     public void setTagParameter(Project project, PsiDirectory psidirectory) {
         mProject = project;
         mMvpPsiDirectoryParent = psidirectory;
+        mModel = new MvpGenerateModel(mProject);
     }
 
     @Override
     public void startView(NewMvpActionContract.View view) {
         this.mView = view;
-        mModel = new MvpGenerateModel();
     }
 
     private String getViewPsiClassName(String name) {

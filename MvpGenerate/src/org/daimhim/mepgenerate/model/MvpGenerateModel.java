@@ -8,23 +8,15 @@ import com.intellij.psi.PsiClass;
 import org.daimhim.mepgenerate.GlobalVariables;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class MvpGenerateModel {
-    private Map<String,List<PsiClass>> baseClasss;
     private Project mProject;
-    public MvpGenerateModel() {
-        init();
+
+    public MvpGenerateModel(Project mProject) {
+        this.mProject = mProject;
     }
 
-
-
-    private void init() {
-        baseClasss = new HashMap<>();
-    }
     public List<String> getView(){
         ArrayList<String> strings = new ArrayList<>();
         strings.add(GlobalVariables.BVIEW + GlobalVariables.JAVA);
@@ -63,17 +55,12 @@ public class MvpGenerateModel {
         return strings;
     }
 
-    public List<VirtualFile> getLocalConfiguration(String key){
+    public List<String> getLocalConfiguration(String key){
         String[] values = PropertiesComponent.getInstance(mProject).getValues(key);
-        ArrayList<VirtualFile> list = new ArrayList<>();
-        VirtualFile virtualFile = null;
-        for (int i = 0; i < values.length; i++) {
-            virtualFile = LocalFileSystem.getInstance().findFileByIoFile(new File(values[i]));
-            if (virtualFile != null) {
-                list.add(virtualFile);
-            }
+        if (values == null){
+            return new ArrayList<String>();
         }
-        return list;
+        return Arrays.asList(values);
     }
 
 

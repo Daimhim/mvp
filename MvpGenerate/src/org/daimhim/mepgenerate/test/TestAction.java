@@ -3,6 +3,8 @@ package org.daimhim.mepgenerate.test;
 import com.intellij.codeInsight.CodeInsightActionHandler;
 import com.intellij.codeInsight.generation.actions.BaseGenerateAction;
 import com.intellij.ide.util.PropertiesComponent;
+import com.intellij.ide.util.TreeClassChooser;
+import com.intellij.ide.util.TreeClassChooserFactoryImpl;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.editor.Editor;
@@ -108,13 +110,18 @@ public class TestAction extends BaseGenerateAction {
             System.out.println("allFields:"+allFields[i].getName() + "   getType:"+allFields[i].getType().toString());
         }
 //        PropertiesComponent.getInstance(project)
-        VirtualFile[] virtualFiles = FileChooser.chooseFiles(new FileChooserDescriptor(true, true, true, true, true, true)
-                , project, virtualFile);
-        for (int i = 0; i < virtualFiles.length; i++) {
-            System.out.println(virtualFiles[i].getPath());
-            System.out.println(virtualFiles[i].getUrl());
-            System.out.println(LocalFileSystem.getInstance().findFileByIoFile(new File(virtualFiles[i].getPath())).getName());
-        }
+//        VirtualFile[] virtualFiles = FileChooser.chooseFiles(new FileChooserDescriptor(true, true, true, true, true, true)
+//                , project, virtualFile);
+//        for (int i = 0; i < virtualFiles.length; i++) {
+//            System.out.println(virtualFiles[i].getPath());
+//            System.out.println(virtualFiles[i].getUrl());
+//            System.out.println(LocalFileSystem.getInstance().findFileByIoFile(new File(virtualFiles[i].getPath())).getName());
+//        }
+        TreeClassChooser allProjectScopeChooser = TreeClassChooserFactoryImpl.getInstance(project).createAllProjectScopeChooser("选择类");
+        allProjectScopeChooser.showDialog();
+        PsiClass selected = allProjectScopeChooser.getSelected();
+        System.out.println(selected.getName());
+        System.out.println(selected.getQualifiedName());
     }
 
 
