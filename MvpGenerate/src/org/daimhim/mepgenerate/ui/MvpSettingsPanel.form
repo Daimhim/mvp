@@ -60,23 +60,38 @@
           <splitpane id="9af35" binding="jsp_Conten">
             <constraints>
               <grid row="0" column="0" row-span="3" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
-                <preferred-size width="200" height="200"/>
+                <preferred-size width="450" height="250"/>
               </grid>
             </constraints>
-            <properties/>
+            <properties>
+              <dividerLocation value="100"/>
+              <dividerSize value="10"/>
+              <oneTouchExpandable value="false"/>
+            </properties>
             <border type="none"/>
             <children>
               <component id="82d1d" class="javax.swing.JList" binding="list1" default-binding="true">
                 <constraints>
                   <splitpane position="left"/>
                 </constraints>
-                <properties/>
+                <properties>
+                  <selectionMode value="0"/>
+                </properties>
+                <clientProperties>
+                  <List.isFileList class="java.lang.Boolean" value="true"/>
+                </clientProperties>
               </component>
               <component id="39b28" class="javax.swing.JList" binding="list2" default-binding="true">
                 <constraints>
                   <splitpane position="right"/>
                 </constraints>
-                <properties/>
+                <properties>
+                  <preferredSize width="0" height="0"/>
+                  <selectionMode value="0"/>
+                </properties>
+                <clientProperties>
+                  <List.isFileList class="java.lang.Boolean" value="true"/>
+                </clientProperties>
               </component>
             </children>
           </splitpane>

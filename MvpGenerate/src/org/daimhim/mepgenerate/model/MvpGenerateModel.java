@@ -6,6 +6,7 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
 import org.daimhim.mepgenerate.GlobalVariables;
+import sun.plugin2.util.SystemUtil;
 
 import java.io.File;
 import java.util.*;
@@ -55,12 +56,17 @@ public class MvpGenerateModel {
         return strings;
     }
 
-    public List<String> getLocalConfiguration(String key){
+    public Vector<String> getLocalConfiguration(String key){
+        Vector<String> objects = new Vector<>();
         String[] values = PropertiesComponent.getInstance(mProject).getValues(key);
-        if (values == null){
-            return new ArrayList<String>();
+        if (null != values) {
+            objects.addAll(Arrays.asList(values));
         }
-        return Arrays.asList(values);
+        return objects;
+    }
+
+    public void setLocalConfiguration(String key,String[] value){
+        PropertiesComponent.getInstance(mProject).setValues(key,value);
     }
 
 

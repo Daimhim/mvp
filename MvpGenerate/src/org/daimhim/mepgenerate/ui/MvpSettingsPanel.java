@@ -3,22 +3,21 @@ package org.daimhim.mepgenerate.ui;
 import com.intellij.ide.util.TreeClassChooser;
 import com.intellij.ide.util.TreeClassChooserFactoryImpl;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VirtualFile;
 
+import java.awt.*;
 import java.util.*;
 
 import com.intellij.psi.PsiClass;
+import com.intellij.util.ArrayUtil;
 import org.codehaus.groovy.util.ListHashMap;
 import org.daimhim.mepgenerate.GlobalVariables;
 import org.daimhim.mepgenerate.model.MvpGenerateModel;
 
 import javax.swing.*;
-import javax.swing.event.AncestorListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.plaf.ListUI;
 import java.awt.event.*;
+import java.util.List;
 
 public class MvpSettingsPanel extends JDialog {
     private JPanel contentPane;
@@ -28,29 +27,41 @@ public class MvpSettingsPanel extends JDialog {
     private JPanel lb_add;
     private JSplitPane jsp_Conten;
     private JList<String> list1;
-    private JList list2;
+    private JList<String> list2;
     private JButton bt_add;
     private MvpGenerateModel mvpGenerateModel;
-    Map<String,List<String>> listMap =new ListHashMap<>();
+    Map<String,Vector<String>> listMap =new ListHashMap<>();
     Project mProject;
 
     public MvpSettingsPanel(Project project) {
         mProject = project;
         mvpGenerateModel = new MvpGenerateModel(mProject);
         setContentPane(contentPane);
-        contentPane.setSize(1500,1500);
+        initData();
+        initView();
+    }
+
+    private void initView() {
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
+        setTitle("Mvp Configuration");
 
         buttonOK.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                onOK();
+                dispose();
+                Iterator<Map.Entry<String, Vector<String>>> iterator = listMap.entrySet().iterator();
+                Map.Entry<String, Vector<String>> next = null;
+                while (iterator.hasNext()){
+                    next = iterator.next();
+                    mvpGenerateModel.setLocalConfiguration(next.getKey(), ArrayUtil.toStringArray(next.getValue()));
+                }
             }
         });
 
         buttonCancel.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                onCancel();
+                // add your code here if necessary
+                dispose();
             }
         });
 
@@ -58,41 +69,47 @@ public class MvpSettingsPanel extends JDialog {
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
-                onCancel();
+                // add your code here if necessary
+                dispose();
             }
         });
 
         // call onCancel() on ESCAPE
         contentPane.registerKeyboardAction(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                onCancel();
+                // add your code here if necessary
+                dispose();
             }
-        }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-        lb_delete.setSize(20,20);
-        bt_add.setSize(20,20);
-        list1.setSize(100,500);
-        list2.setSize(200,500);
-        jsp_Conten.setSize(500,500);
-        lb_add.setSize(1000,1000);
-        list1.setFixedCellWidth(200);
-        list2.setFixedCellWidth(500);
-//        initData();
-//        initView();
-    }
-
-    private void initView() {
-        list1.setSelectedIndex(0);
+        },
+                KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+                JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        lb_delete.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (!list2.isSelectionEmpty()) {
+                    listMap.get(list1.getSelectedValue()).remove(list2.getSelectedValue());
+                    list2.updateUI();
+                }
+            }
+        });
         bt_add.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                TreeClassChooser allProjectScopeChooser = TreeClassChooserFactoryImpl.getInstance(mProject).createAllProjectScopeChooser(list1.getSelectedValue());
+                TreeClassChooser allProjectScopeChooser = TreeClassChooserFactoryImpl.getInstance(mProject)
+                        .createAllProjectScopeChooser(list1.getSelectedValue());
                 allProjectScopeChooser.showDialog();
                 PsiClass selected = allProjectScopeChooser.getSelected();
-                System.out.println(selected.getQualifiedName());
-                listMap.get(list1.getSelectedValue()).add(selected.getQualifiedName());
-                list2.setListData(new Vector<String>(listMap.get(list1.getSelectedValue())));
+                if (null!=selected && !listMap.get(list1.getSelectedValue()).contains(selected.getQualifiedName())) {
+                    listMap.get(list1.getSelectedValue()).add(selected.getQualifiedName());
+                    list2.updateUI();
+                    list2.setSelectedIndex(listMap.get(list1.getSelectedValue()).size()-1);
+                }
             }
         });
+        list1.addListSelectionListener(e -> {
+            list2.setListData(listMap.get(list1.getSelectedValue()));
+        });
+        list1.setSelectedIndex(0);
     }
 
 
@@ -104,24 +121,14 @@ public class MvpSettingsPanel extends JDialog {
         listMap.put(GlobalVariables.BVIEW,mvpGenerateModel.getLocalConfiguration(GlobalVariables.BVIEW));
         Vector<String> stringVector = new Vector<>(listMap.keySet());
         list1.setListData(stringVector);
-        list1.addListSelectionListener(e -> {
-            List<String> stringList = listMap.get(list1.getSelectedValue());
-            list2.setListData(new Vector<String>(stringList));
-        });
-
     }
 
-    private void onOK() {
-        // add your code here
-        dispose();
-    }
-
-    private void onCancel() {
-        // add your code here if necessary
-        dispose();
-    }
     public void showMvpSettingsPanel(){
-
+        Toolkit toolkit = Toolkit.getDefaultToolkit();
+        Dimension screenSize = toolkit.getScreenSize();
+        setLocation((screenSize.width - getWidth()) / 2, (screenSize.height - getHeight()) / 2);
+        pack();
+        setVisible(true);
     }
     public static void main(String[] args) {
         MvpSettingsPanel dialog = new MvpSettingsPanel(null);
@@ -130,4 +137,5 @@ public class MvpSettingsPanel extends JDialog {
         dialog.setVisible(true);
         System.exit(0);
     }
+
 }

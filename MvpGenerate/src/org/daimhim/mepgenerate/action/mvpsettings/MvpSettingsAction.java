@@ -12,8 +12,6 @@ public class MvpSettingsAction extends AnAction {
     public void actionPerformed(AnActionEvent event) {
         // TODO: insert action logic here
         MvpSettingsPanel dialog = new MvpSettingsPanel(event.getData(PlatformDataKeys.PROJECT));
-        dialog.setTitle("Mvp配置");
-        dialog.pack();
-        dialog.setVisible(true);
+        dialog.showMvpSettingsPanel();
     }
 }

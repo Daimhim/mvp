@@ -33,7 +33,7 @@ public class NewMvpAction extends AnAction implements NewMvpActionContract.View 
         //获取Project根目录
         VirtualFile data = e.getData(VIRTUAL_FILE);
         Presentation presentation = e.getPresentation();
-        if (isNewMVPSimple(data.getPath())) {
+        if (null!=data && isNewMVPSimple(data.getPath())) {
             presentation.setEnabledAndVisible(true);
         } else {
             presentation.setEnabledAndVisible(false);
