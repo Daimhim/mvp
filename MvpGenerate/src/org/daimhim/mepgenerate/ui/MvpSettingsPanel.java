@@ -14,8 +14,6 @@ import org.daimhim.mepgenerate.GlobalVariables;
 import org.daimhim.mepgenerate.model.MvpGenerateModel;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import java.awt.event.*;
 import java.util.List;
 
@@ -30,7 +28,8 @@ public class MvpSettingsPanel extends JDialog {
     private JList<String> list2;
     private JButton bt_add;
     private MvpGenerateModel mvpGenerateModel;
-    Map<String,Vector<String>> listMap =new ListHashMap<>();
+    Map<String, Vector<String>> listMap = new ListHashMap<>();
+    AbstractListModelHelp listModelHelp;
     Project mProject;
 
     public MvpSettingsPanel(Project project) {
@@ -51,7 +50,7 @@ public class MvpSettingsPanel extends JDialog {
                 dispose();
                 Iterator<Map.Entry<String, Vector<String>>> iterator = listMap.entrySet().iterator();
                 Map.Entry<String, Vector<String>> next = null;
-                while (iterator.hasNext()){
+                while (iterator.hasNext()) {
                     next = iterator.next();
                     mvpGenerateModel.setLocalConfiguration(next.getKey(), ArrayUtil.toStringArray(next.getValue()));
                 }
@@ -76,11 +75,11 @@ public class MvpSettingsPanel extends JDialog {
 
         // call onCancel() on ESCAPE
         contentPane.registerKeyboardAction(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                // add your code here if necessary
-                dispose();
-            }
-        },
+                                               public void actionPerformed(ActionEvent e) {
+                                                   // add your code here if necessary
+                                                   dispose();
+                                               }
+                                           },
                 KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
                 JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         lb_delete.addActionListener(new ActionListener() {
@@ -99,37 +98,39 @@ public class MvpSettingsPanel extends JDialog {
                         .createAllProjectScopeChooser(list1.getSelectedValue());
                 allProjectScopeChooser.showDialog();
                 PsiClass selected = allProjectScopeChooser.getSelected();
-                if (null!=selected && !listMap.get(list1.getSelectedValue()).contains(selected.getQualifiedName())) {
+                if (null != selected && !listMap.get(list1.getSelectedValue()).contains(selected.getQualifiedName())) {
                     listMap.get(list1.getSelectedValue()).add(selected.getQualifiedName());
                     list2.updateUI();
-                    list2.setSelectedIndex(listMap.get(list1.getSelectedValue()).size()-1);
                 }
             }
         });
         list1.addListSelectionListener(e -> {
-            list2.setListData(listMap.get(list1.getSelectedValue()));
+            listModelHelp.setKey(list1.getSelectedValue());
+            list2.updateUI();
         });
         list1.setSelectedIndex(0);
     }
 
 
-
     private void initData() {
-        listMap.put(GlobalVariables.IVIEW,mvpGenerateModel.getLocalConfiguration(GlobalVariables.IVIEW));
-        listMap.put(GlobalVariables.IPRESENTER,mvpGenerateModel.getLocalConfiguration(GlobalVariables.IPRESENTER));
-        listMap.put(GlobalVariables.BPRESENTER,mvpGenerateModel.getLocalConfiguration(GlobalVariables.BPRESENTER));
-        listMap.put(GlobalVariables.BVIEW,mvpGenerateModel.getLocalConfiguration(GlobalVariables.BVIEW));
+        listMap.put(GlobalVariables.IVIEW, mvpGenerateModel.getLocalConfiguration(GlobalVariables.IVIEW));
+        listMap.put(GlobalVariables.IPRESENTER, mvpGenerateModel.getLocalConfiguration(GlobalVariables.IPRESENTER));
+        listMap.put(GlobalVariables.BPRESENTER, mvpGenerateModel.getLocalConfiguration(GlobalVariables.BPRESENTER));
+        listMap.put(GlobalVariables.BVIEW, mvpGenerateModel.getLocalConfiguration(GlobalVariables.BVIEW));
         Vector<String> stringVector = new Vector<>(listMap.keySet());
         list1.setListData(stringVector);
+        listModelHelp = new AbstractListModelHelp(listMap);
+        list2.setModel(listModelHelp);
     }
 
-    public void showMvpSettingsPanel(){
+    public void showMvpSettingsPanel() {
         Toolkit toolkit = Toolkit.getDefaultToolkit();
         Dimension screenSize = toolkit.getScreenSize();
         setLocation((screenSize.width - getWidth()) / 2, (screenSize.height - getHeight()) / 2);
         pack();
         setVisible(true);
     }
+
     public static void main(String[] args) {
         MvpSettingsPanel dialog = new MvpSettingsPanel(null);
         dialog.setTitle("Mvp配置");
@@ -138,4 +139,26 @@ public class MvpSettingsPanel extends JDialog {
         System.exit(0);
     }
 
+    class AbstractListModelHelp extends AbstractListModel<String> {
+        private Map<String, Vector<String>> vectorMap;
+        String key;
+
+        public AbstractListModelHelp(Map<String, Vector<String>> vectorMap) {
+            this.vectorMap = vectorMap;
+        }
+
+        public void setKey(String key) {
+            this.key = key;
+        }
+
+        @Override
+        public int getSize() {
+            return key == null || "".equals(key) ? 0 : vectorMap.get(key).size();
+        }
+
+        @Override
+        public String getElementAt(int index) {
+            return vectorMap.get(key).get(index);
+        }
+    }
 }
