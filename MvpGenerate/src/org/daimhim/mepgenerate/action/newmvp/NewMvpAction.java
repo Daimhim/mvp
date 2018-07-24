@@ -15,6 +15,7 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.PsiManagerImpl;
 import com.intellij.psi.impl.file.PsiDirectoryImpl;
+import org.daimhim.mepgenerate.ui.NewMvpPanel;
 
 import javax.swing.*;
 import java.util.List;
@@ -51,6 +52,9 @@ public class NewMvpAction extends AnAction implements NewMvpActionContract.View 
         }else {
             mNewMvpActionPresenter.setTagParameter(mProject,PsiManagerImpl.getInstance(mProject).findDirectory(virtualFile.getParent()));
         }
+        NewMvpPanel newMvpPanel = new NewMvpPanel(mProject);
+        newMvpPanel.showNewMvpPanel();
+
         String mDefClassName = mNewMvpActionPresenter.initMvpName();
         if (mDefClassName == null || "".equals(mDefClassName)){
             showErrorDialog("请输入包名","请输入包名");
@@ -61,7 +65,6 @@ public class NewMvpAction extends AnAction implements NewMvpActionContract.View 
 
     public static boolean isNewMVPSimple(String path) {
         if (path.indexOf("/src/") < 0) return false;
-
         return true;
     }
 
