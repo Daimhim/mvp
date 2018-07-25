@@ -3,12 +3,14 @@ package org.daimhim.mepgenerate.ui;
 import com.intellij.openapi.project.Project;
 import org.daimhim.mepgenerate.GlobalVariables;
 import org.daimhim.mepgenerate.model.MvpGenerateModel;
+import org.daimhim.mepgenerate.model.NewMvpParameter;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListDataListener;
 import java.awt.event.*;
+import java.util.Enumeration;
 import java.util.Vector;
 
 public class NewMvpPanel extends JDialog {
@@ -49,11 +51,27 @@ public class NewMvpPanel extends JDialog {
     private JLabel otherTip;
 
     private MvpGenerateModel mvpGenerateModel;
+    private NewMvpParameter mvpParameter;
+    private ButtonGroup buttonGroup;
 
     public NewMvpPanel(Project project) {
         mvpGenerateModel = new MvpGenerateModel(project);
         initView();
-        initData();
+        initDataTest();
+    }
+
+    private void initDataTest() {
+        Vector<String> vector = new Vector<>();
+        for (int i = 0; i < 10; i++) {
+            vector.add(String.valueOf(i));
+        }
+        IViewComboBox.setModel(new DefaultComboBoxModel<String>(vector));
+        IPresenterComboBox.setModel(new DefaultComboBoxModel<String>(vector));
+        IModelComboBox.setModel(new DefaultComboBoxModel<String>(vector));
+        baseViewComboBox.setModel(new DefaultComboBoxModel<String>(vector));
+        basePresenterComboBox.setModel(new DefaultComboBoxModel<String>(vector));
+        baseModelComboBox.setModel(new DefaultComboBoxModel<String>(vector));
+
     }
 
     private void initData() {
@@ -95,7 +113,7 @@ public class NewMvpPanel extends JDialog {
                 onCancel();
             }
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-        ButtonGroup buttonGroup = new ButtonGroup();
+        buttonGroup = new ButtonGroup();
         buttonGroup.add(activityRadioButton);
         buttonGroup.add(fragmentRadioButton);
         buttonGroup.add(dialogRadioButton);
@@ -178,24 +196,59 @@ public class NewMvpPanel extends JDialog {
         });
     }
 
-    public void showNewMvpPanel(){
+    public void showNewMvpPanel() {
         pack();
         setVisible(true);
     }
 
     private void onOK() {
         // add your code here
-        if (mvpNameInput.getText().isEmpty()){
+        if (mvpNameInput.getText().isEmpty()) {
             mvpNameTip.setText("name not empty");
             mvpNameTip.setVisible(true);
             return;
         }
-        if (otherRadioButton.isSelected() && otherInput.getText().isEmpty()){
+        if (otherRadioButton.isSelected() && otherInput.getText().isEmpty()) {
             otherTip.setText("other not empty");
             otherTip.setVisible(true);
             return;
         }
+        mvpParameter = new NewMvpParameter();
+        mvpParameter.setIView(IViewCheckBox.isSelected());
+        mvpParameter.setiVIEW((String) IViewComboBox.getSelectedItem());
+        mvpParameter.setIPresenter(IPresenterCheckBox.isSelected());
+        mvpParameter.setiPRESENTER((String) IPresenterComboBox.getSelectedItem());
+        mvpParameter.setIModel(IModelCheckBox.isSelected());
+        mvpParameter.setiMODEL((String) IModelComboBox.getSelectedItem());
+
+
+        mvpParameter.setBaseView(baseViewCheckBox.isSelected());
+        mvpParameter.setbVIEW((String) baseViewComboBox.getSelectedItem());
+        mvpParameter.setBasePresenter(basePresenterCheckBox.isSelected());
+        mvpParameter.setbPRESENTER((String) basePresenterComboBox.getSelectedItem());
+        mvpParameter.setBaseModel(baseModelCheckBox.isSelected());
+        mvpParameter.setbMODEL((String) baseModelComboBox.getSelectedItem());
+        String suffix = "";
+        Enumeration<AbstractButton> elements = buttonGroup.getElements();
+        AbstractButton abstractButton = null;
+        while (elements.hasMoreElements()){
+            abstractButton = elements.nextElement();
+            if (abstractButton.isSelected()){
+                suffix = abstractButton.getText().trim();
+                break;
+            }
+        }
+        if ("other".equals(suffix)) {
+            suffix = otherInput.getText().trim();
+        }
+        mvpParameter.setClassSuffix(suffix);
+        mvpParameter.setClassName(mvpNameInput.getText().trim());
+        System.out.println(mvpParameter.toString());
         dispose();
+    }
+
+    public NewMvpParameter getMvpParameter() {
+        return mvpParameter;
     }
 
     private void onCancel() {
@@ -209,4 +262,5 @@ public class NewMvpPanel extends JDialog {
         dialog.setVisible(true);
         System.exit(0);
     }
+
 }
