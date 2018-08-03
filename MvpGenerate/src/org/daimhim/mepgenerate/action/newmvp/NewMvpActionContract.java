@@ -4,6 +4,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import org.daimhim.mepgenerate.action.mvpgenerate.MvpGenerateContract;
+import org.daimhim.mepgenerate.model.NewMvpParameter;
 import org.daimhim.mepgenerate.mvp.IPresenter;
 import org.daimhim.mepgenerate.mvp.IView;
 
@@ -34,7 +35,7 @@ public interface NewMvpActionContract {
 
     public interface Presenter extends IPresenter {
         String initMvpName();
-        void setTagParameter(Project project,PsiDirectory psidirectory);
+        void setTagParameter(Project project,PsiDirectory psidirectory,NewMvpParameter mvpParameter);
         void startView(NewMvpActionContract.View view);
     }
 }

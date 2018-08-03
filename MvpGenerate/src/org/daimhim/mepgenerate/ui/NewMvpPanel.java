@@ -57,7 +57,7 @@ public class NewMvpPanel extends JDialog {
     public NewMvpPanel(Project project) {
         mvpGenerateModel = new MvpGenerateModel(project);
         initView();
-        initDataTest();
+        initData();
     }
 
     private void initDataTest() {

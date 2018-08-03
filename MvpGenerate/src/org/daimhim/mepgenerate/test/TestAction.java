@@ -125,14 +125,6 @@ public class TestAction extends BaseGenerateAction {
     }
 
 
-    public static void main(String[] args) {
-//        doInBackground("",
-//                "H:\\msdia80.dll",
-//                "out",
-//                "POST");
-
-    }
-
     /**
      * @param strings [0] url [1] filepatch [2] in or out [3] requestType
      *                [4] ReadTimeout [5] ConnectTimeout
@@ -178,8 +170,6 @@ public class TestAction extends BaseGenerateAction {
             System.out.println(new String(buf));
 //            }
             return connection.getResponseCode();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         } finally {

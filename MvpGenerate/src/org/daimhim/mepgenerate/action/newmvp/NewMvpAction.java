@@ -1,5 +1,6 @@
 package org.daimhim.mepgenerate.action.newmvp;
 
+import com.intellij.ide.favoritesTreeView.PsiClassFavoriteNodeProvider;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 
@@ -11,16 +12,7 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.SelectFromListDialog;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.WindowManager;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.impl.PsiClassImplUtil;
 import com.intellij.psi.impl.PsiManagerImpl;
-import com.intellij.psi.impl.file.PsiDirectoryImpl;
-import com.intellij.psi.impl.file.PsiFileImplUtil;
-import com.intellij.psi.impl.source.PsiClassImpl;
-import com.intellij.psi.util.PsiClassUtil;
-import org.daimhim.mepgenerate.model.NewMvpParameter;
 import org.daimhim.mepgenerate.ui.NewMvpPanel;
 
 import javax.swing.*;
@@ -31,7 +23,7 @@ import static org.daimhim.mepgenerate.action.mvpgenerate.MvpGenerate.getVirtualF
 
 public class NewMvpAction extends AnAction implements NewMvpActionContract.View {
 
-    private NewMvpActionPresenterImpl mNewMvpActionPresenter = new NewMvpActionPresenterImpl();
+    private NewMvpActionPresenterImpl2 mNewMvpActionPresenter = new NewMvpActionPresenterImpl2();
     private Project mProject;
 
     @Override
@@ -53,14 +45,14 @@ public class NewMvpAction extends AnAction implements NewMvpActionContract.View 
         VirtualFile virtualFile = event.getData(PlatformDataKeys.VIRTUAL_FILE);
         mProject = event.getData(PlatformDataKeys.PROJECT);
         mNewMvpActionPresenter.startView(this);
-        if (virtualFile.isDirectory()) {
-            mNewMvpActionPresenter.setTagParameter(mProject,PsiManagerImpl.getInstance(mProject).findDirectory(virtualFile));
-        }else {
-            mNewMvpActionPresenter.setTagParameter(mProject,PsiManagerImpl.getInstance(mProject).findDirectory(virtualFile.getParent()));
-        }
+
         NewMvpPanel newMvpPanel = new NewMvpPanel(mProject);
         newMvpPanel.showNewMvpPanel();
-        NewMvpParameter mvpParameter = newMvpPanel.getMvpParameter();
+        if (null!=virtualFile && virtualFile.isDirectory()) {
+            mNewMvpActionPresenter.setTagParameter(mProject,PsiManagerImpl.getInstance(mProject).findDirectory(virtualFile),newMvpPanel.getMvpParameter());
+        }else if (null!=virtualFile){
+            mNewMvpActionPresenter.setTagParameter(mProject,PsiManagerImpl.getInstance(mProject).findDirectory(virtualFile.getParent()),newMvpPanel.getMvpParameter());
+        }
         String mDefClassName = mNewMvpActionPresenter.initMvpName();
         if (mDefClassName == null || "".equals(mDefClassName)){
             showErrorDialog("请输入包名","请输入包名");

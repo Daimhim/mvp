@@ -10,6 +10,7 @@ import com.intellij.util.IncorrectOperationException;
 import org.daimhim.mepgenerate.GlobalVariables;
 import org.daimhim.mepgenerate.model.MvpGenerateModel;
 import org.daimhim.mepgenerate.help.VirtualFileHelp;
+import org.daimhim.mepgenerate.model.NewMvpParameter;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -56,6 +57,7 @@ public class NewMvpActionPresenterImpl implements NewMvpActionContract.Presenter
     private String mDefNameSuffix = "";
     private MvpGenerateModel mModel;
     private String mRawData;
+    private NewMvpParameter mMvpParameter;
 
     @Override
     public String initMvpName() {
@@ -203,7 +205,7 @@ public class NewMvpActionPresenterImpl implements NewMvpActionContract.Presenter
     }
 
     @Override
-    public void setTagParameter(Project project, PsiDirectory psidirectory) {
+    public void setTagParameter(Project project, PsiDirectory psidirectory,NewMvpParameter mvpParameter) {
         mProject = project;
         mMvpPsiDirectoryParent = psidirectory;
         mModel = new MvpGenerateModel(mProject);

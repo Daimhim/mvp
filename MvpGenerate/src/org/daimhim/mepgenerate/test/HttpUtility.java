@@ -204,11 +204,21 @@ public class HttpUtility {
         if (status != HttpURLConnection.HTTP_OK) {
             throw new IOException("服务器返回状态非正常响应状态.");
         }
-        return null;//new String(CommonUtil.streamToByteArray(connection.getInputStream()));
+        return new String(streamToByteArray(connection.getInputStream()));
     }
-//    public static byte[] streamToByteArray(InputStream inputStream) throws IOException {
-//        byte[] b = new byte[inputStream.available()];
-//        inputStream.read(b);
-//
-//    }
+
+    public static byte[] streamToByteArray(InputStream inputStream) throws IOException {
+        ByteArrayOutputStream swapStream = new ByteArrayOutputStream();
+        byte[] buff = new byte[1024];
+        int rc = 0;
+        while ((rc = inputStream.read(buff, 0, buff.length)) > 0) {
+            swapStream.write(buff, 0, rc);
+        }
+        return swapStream.toByteArray();
+    }
+
+
+    public static void main(String[] args) {
+//        HttpUtility.post()
+    }
 }
