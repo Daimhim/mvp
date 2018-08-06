@@ -5,6 +5,9 @@ public class NewMvpParameter {
     private boolean isIPresenter;
     private boolean isIModel;
 
+    private boolean isImplP;
+    private boolean isImplV;
+
     private boolean isBaseView;
     private boolean isBasePresenter;
     private boolean isBaseModel;
@@ -26,6 +29,8 @@ public class NewMvpParameter {
                 "isIView=" + isIView +
                 ", isIPresenter=" + isIPresenter +
                 ", isIModel=" + isIModel +
+                ", isImplP=" + isImplP +
+                ", isImplV=" + isImplV +
                 ", isBaseView=" + isBaseView +
                 ", isBasePresenter=" + isBasePresenter +
                 ", isBaseModel=" + isBaseModel +
@@ -38,6 +43,22 @@ public class NewMvpParameter {
                 ", classSuffix='" + classSuffix + '\'' +
                 ", className='" + className + '\'' +
                 '}';
+    }
+
+    public boolean isImplP() {
+        return isImplP;
+    }
+
+    public void setImplP(boolean implP) {
+        isImplP = implP;
+    }
+
+    public boolean isImplV() {
+        return isImplV;
+    }
+
+    public void setImplV(boolean implV) {
+        isImplV = implV;
     }
 
     public String getClassSuffix() {

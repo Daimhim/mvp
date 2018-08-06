@@ -2,13 +2,8 @@ package org.daimhim.mepgenerate.model;
 
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiClass;
 import org.daimhim.mepgenerate.GlobalVariables;
-import sun.plugin2.util.SystemUtil;
 
-import java.io.File;
 import java.util.*;
 
 public class MvpGenerateModel {
@@ -59,14 +54,18 @@ public class MvpGenerateModel {
     public Vector<String> getLocalConfiguration(String key){
         Vector<String> objects = new Vector<>();
         String[] values = PropertiesComponent.getInstance(mProject).getValues(key);
-        if (null != values) {
+        if (null != values && values.length > 0) {
             objects.addAll(Arrays.asList(values));
         }
         return objects;
     }
 
     public void setLocalConfiguration(String key,String[] value){
-        PropertiesComponent.getInstance(mProject).setValues(key,value);
+        if (value.length > 0) {
+            PropertiesComponent.getInstance(mProject).setValues(key, value);
+        }else {
+            PropertiesComponent.getInstance(mProject).unsetValue(key);
+        }
     }
 
 

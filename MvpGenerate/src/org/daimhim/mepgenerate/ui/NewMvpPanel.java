@@ -1,6 +1,8 @@
 package org.daimhim.mepgenerate.ui;
 
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiDirectory;
+import com.intellij.psi.PsiFile;
 import org.daimhim.mepgenerate.GlobalVariables;
 import org.daimhim.mepgenerate.model.MvpGenerateModel;
 import org.daimhim.mepgenerate.model.NewMvpParameter;
@@ -8,7 +10,7 @@ import org.daimhim.mepgenerate.model.NewMvpParameter;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.event.ListDataListener;
+import java.awt.*;
 import java.awt.event.*;
 import java.util.Enumeration;
 import java.util.Vector;
@@ -49,13 +51,17 @@ public class NewMvpPanel extends JDialog {
 
     private JLabel mvpNameTip;
     private JLabel otherTip;
+    private JCheckBox implementMethodCheckBox;
 
     private MvpGenerateModel mvpGenerateModel;
     private NewMvpParameter mvpParameter;
     private ButtonGroup buttonGroup;
 
-    public NewMvpPanel(Project project) {
+    private PsiDirectory mMvpPsiDirectoryParent;
+
+    public NewMvpPanel(Project project, PsiDirectory psiDirectory) {
         mvpGenerateModel = new MvpGenerateModel(project);
+        mMvpPsiDirectoryParent = psiDirectory;
         initView();
         initData();
     }
@@ -168,11 +174,6 @@ public class NewMvpPanel extends JDialog {
         });
 
         mvpNameInput.addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusGained(FocusEvent e) {
-                super.focusGained(e);
-                mvpNameTip.setVisible(false);
-            }
 
             @Override
             public void focusLost(FocusEvent e) {
@@ -182,11 +183,6 @@ public class NewMvpPanel extends JDialog {
         });
 
         otherInput.addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusGained(FocusEvent e) {
-                super.focusGained(e);
-                otherTip.setVisible(false);
-            }
 
             @Override
             public void focusLost(FocusEvent e) {
@@ -196,7 +192,9 @@ public class NewMvpPanel extends JDialog {
         });
     }
 
-    public void showNewMvpPanel() {
+    public void showNewMvpPanel() {Toolkit toolkit = Toolkit.getDefaultToolkit();
+        Dimension screenSize = toolkit.getScreenSize();
+        setLocation((screenSize.width - getWidth()) / 2, (screenSize.height - getHeight()) / 2);
         pack();
         setVisible(true);
     }
@@ -205,6 +203,11 @@ public class NewMvpPanel extends JDialog {
         // add your code here
         if (mvpNameInput.getText().isEmpty()) {
             mvpNameTip.setText("name not empty");
+            mvpNameTip.setVisible(true);
+            return;
+        }
+        if (mMvpPsiDirectoryParent.findSubdirectory(mvpNameInput.getText()) != null){
+            mvpNameTip.setText("Package name already exists");
             mvpNameTip.setVisible(true);
             return;
         }
@@ -221,6 +224,8 @@ public class NewMvpPanel extends JDialog {
         mvpParameter.setIModel(IModelCheckBox.isSelected());
         mvpParameter.setiMODEL((String) IModelComboBox.getSelectedItem());
 
+        mvpParameter.setImplP(implementMethodCheckBox.isSelected());
+        mvpParameter.setImplV(implementMethodCheckBox.isSelected());
 
         mvpParameter.setBaseView(baseViewCheckBox.isSelected());
         mvpParameter.setbVIEW((String) baseViewComboBox.getSelectedItem());
@@ -257,7 +262,7 @@ public class NewMvpPanel extends JDialog {
     }
 
     public static void main(String[] args) {
-        NewMvpPanel dialog = new NewMvpPanel(null);
+        NewMvpPanel dialog = new NewMvpPanel(null,null);
         dialog.pack();
         dialog.setVisible(true);
         System.exit(0);

@@ -1,5 +1,7 @@
 package org.daimhim.mepgenerate.ui;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.intellij.ide.util.TreeClassChooser;
 import com.intellij.ide.util.TreeClassChooserFactoryImpl;
 import com.intellij.openapi.project.Project;
@@ -27,6 +29,7 @@ public class MvpSettingsPanel extends JDialog {
     private JList<String> list1;
     private JList<String> list2;
     private JButton bt_add;
+    private JButton buttonClear;
     private MvpGenerateModel mvpGenerateModel;
     Map<String, Vector<String>> listMap = new ListHashMap<>();
     AbstractListModelHelp listModelHelp;
@@ -44,7 +47,19 @@ public class MvpSettingsPanel extends JDialog {
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
         setTitle("Mvp Configuration");
-
+        buttonClear.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Iterator<Map.Entry<String, Vector<String>>> iterator = listMap.entrySet().iterator();
+                Map.Entry<String, Vector<String>> next = null;
+                while (iterator.hasNext()) {
+                    next = iterator.next();
+                    next.setValue(new Vector<>());
+                    mvpGenerateModel.setLocalConfiguration(next.getKey(),new String[0]);
+                }
+                list2.updateUI();
+            }
+        });
         buttonOK.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 dispose();
