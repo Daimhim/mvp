@@ -34,7 +34,7 @@ public class ClassHelp {
         PsiType returnType = null;
         for (PsiMethod absMethod : absClass.getAllMethods()){
             if (absMethod.getModifierList().hasExplicitModifier(PsiModifier.ABSTRACT)
-                    || absMethod.getModifierList().hasModifierProperty(PsiModifier.ABSTRACT)) {
+                    || (absClass.isInterface() && findMethod(absMethod,impClass)==null)) {
                 //已有 不需要创建
                 if (null == findMethod(absMethod, impClass)) {    //创建一个新的
                     method = elementFactory.createMethod(absMethod.getName(), absMethod.getReturnType(), impClass);
@@ -75,7 +75,7 @@ public class ClassHelp {
         for (PsiMethod method :
                 impClass.findMethodsByName(absMethod.getName(), false)) {
             if (absMethod.getParameterList().getParametersCount() == method.getParameterList().getParametersCount()
-                    && absMethod.getReturnType().equalsToText(method.getReturnType().getCanonicalText())) {
+                    && absMethod.getReturnType().getCanonicalText().equals(method.getReturnType().getCanonicalText())) {
                 return method;
             }
         }

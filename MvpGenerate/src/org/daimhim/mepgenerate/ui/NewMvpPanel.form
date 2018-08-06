@@ -53,7 +53,7 @@
             </constraints>
             <properties>
               <hideActionText value="true"/>
-              <selected value="true"/>
+              <selected value="false"/>
               <text value="Implement method"/>
             </properties>
           </component>
