@@ -40,6 +40,9 @@
     <action id="org.daimhim.mepgenerate.test.TestAction" class="org.daimhim.mepgenerate.test.TestAction" text="TestAction" description="Mvp Generate TestAction">
       <add-to-group group-id="GenerateGroup" anchor="last"/>
     </action>
+    <action id="org.daimhim.mepgenerate.test.TestAction2" class="org.daimhim.mepgenerate.test.TestAction2" text="TestAction2" description="Mvp Generate TestAction2">
+      <add-to-group group-id="GenerateGroup" anchor="last"/>
+    </action>
 
       <action id="org.daimhim.mepgenerate.action.mvpsettings.MvpSettings" class="org.daimhim.mepgenerate.action.mvpsettings.MvpSettingsAction" text="MvpSettings"
               description="MvpSettings">

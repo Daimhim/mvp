@@ -32,7 +32,7 @@ public class ClassHelp {
         }
         //抽象方法
         PsiType returnType = null;
-        for (PsiMethod absMethod : absClass.getAllMethods()){
+        for (PsiMethod absMethod : absClass.getMethods()){
             if (absMethod.getModifierList().hasExplicitModifier(PsiModifier.ABSTRACT)
                     || (absClass.isInterface() && findMethod(absMethod,impClass)==null)) {
                 //已有 不需要创建
